@@ -57,6 +57,7 @@ class Block(nn.Module):
             nn.BatchNorm2d(out_channels),
             nn.ReLU() if act == "relu" else nn.LeakyReLU(0.2)
         )
+        # dropout instead of latent space
         self.use_dropout = use_dropout
         self.dropout = nn.Dropout(0.5)
         self.down = down
@@ -67,7 +68,7 @@ class Block(nn.Module):
 
 
 class Generator(nn.Module):
-    """Generator"""
+    """Generator. UNet arch"""
     def __init__(self, in_channels, features=64):
         super().__init__()
         self.initial_down = nn.Sequential(
