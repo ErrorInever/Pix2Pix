@@ -28,7 +28,7 @@ class AnimeSketchColorDataset(Dataset):
         target_image = augmentation['img_target']
 
         input_image = self._transform_input_img(image=input_image)['image']
-        target_image = self._transform_only_target(image=target_image)['image']
+        target_image = self._transform_target(image=target_image)['image']
 
         return input_image, target_image
 
@@ -55,7 +55,7 @@ class AnimeSketchColorDataset(Dataset):
         )
 
     @property
-    def _transform_only_target(self):
+    def _transform_target(self):
         """Transforms only target image"""
         return A.Compose(
             [
