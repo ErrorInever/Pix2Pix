@@ -20,8 +20,8 @@ class AnimeSketchColorDataset(Dataset):
         img_path = self.img_names[idx]
         img = np.array(Image.open(img_path))
 
-        input_image = img[:, :512, :]
-        target_image = img[:, 512:, :]
+        target_image = img[:, :512, :]
+        input_image = img[:, 512:, :]
 
         augmentation = self._transform_both(image=input_image, img_target=target_image)
         input_image = augmentation['image']
