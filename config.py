@@ -27,7 +27,7 @@ __C.PROJECT_VERSION_NAME = None
 # Display
 __C.NUM_SAMPLES = 4
 __C.BATCH_FREQ = 100
-
+__C.BATCH_IMG_FREQ = 100
 # Init logger
 logger = logging.getLogger()
 c_handler = logging.StreamHandler()
