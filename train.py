@@ -91,6 +91,7 @@ def train_one_epoch(gen, dis, gen_opt, dis_opt, g_scaler, d_scaler, criterion, l
                                   torch.sigmoid(d_fake).mean().item())
         if batch_idx % cfg.BATCH_IMG_FREQ == 0:
             with torch.no_grad():
+                logger.info(f"x {x.shape} | fixed_x {fixed_x.shape}")
                 fixed_fake_y = gen(fixed_x)
                 metric_logger.log_image(fixed_images, fixed_fake_y, epoch, batch_idx)
         # TODO add metrics eval
