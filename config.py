@@ -13,9 +13,9 @@ __C.PROJECT_VERSION_NAME = "Default"
 __C.GEN_FEATURES = 64
 __C.IMG_CHANNELS = 3
 __C.IMG_SIZE = 256
-__C.BATCH_SIZE = 4
-__C.NUM_EPOCHS = 10
-__C.LEARNING_RATE = 1e-4
+__C.BATCH_SIZE = 16
+__C.NUM_EPOCHS = 20
+__C.LEARNING_RATE = 2e-4
 __C.L1_LAMBDA = 100
 # Optimizers
 __C.BETAS = (0.5, 0.999)
@@ -29,7 +29,7 @@ __C.RESUME_ID = None
 __C.NUM_SAMPLES = 4
 __C.BATCH_FREQ = 100
 __C.BATCH_IMG_FREQ = 100
-__C.SAVE_EPOCH_FREQ = 0
+__C.SAVE_EPOCH_FREQ = 1
 # Init logger
 logger = logging.getLogger()
 c_handler = logging.StreamHandler()
