@@ -111,7 +111,7 @@ if __name__ == '__main__':
     if args.wandb_id:
         cfg.WANDB_ID = args.wandb_id
     if args.out_dir:
-        cfg.OUTPUT_DIR = args.out_dir
+        cfg.OUT_DIR = args.out_dir
     if args.test_epoch:
         cfg.NUM_EPOCHS = 1
     if args.num_epoch:
@@ -176,6 +176,6 @@ if __name__ == '__main__':
         train_one_epoch(gen, dis, opt_gen, opt_dis, g_scaler, d_scaler, criterion, l1_loss, train_dataloader,
                         metric_logger, epoch, fixed_images, fixed_x)
         if epoch % cfg.SAVE_EPOCH_FREQ == 0 and epoch != 0:
-            save_path = os.path.join(cfg.OUTPUT_DIR, f"{cfg.PROJECT_VERSION_NAME}_epoch_{epoch}.pth.tar")
+            save_path = os.path.join(cfg.OUT_DIR, f"{cfg.PROJECT_VERSION_NAME}_epoch_{epoch}.pth.tar")
             save_checkpoint(save_path, gen, dis, opt_gen, opt_dis, cfg.LEARNING_RATE)
             logger.info(f"Save model to {save_path}")

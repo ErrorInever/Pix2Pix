@@ -11,6 +11,7 @@ def seed_everything(seed):
     torch.manual_seed(seed)
     torch.cuda.manual_seed(seed)
     torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = True
 
 
 def save_checkpoint(save_path, gen, dis, opt_gen, opt_dis, lr):

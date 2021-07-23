@@ -21,7 +21,7 @@ __C.L1_LAMBDA = 100
 __C.BETAS = (0.5, 0.999)
 # NAMES AND PATHS
 __C.DATA_ROOT = None
-__C.OUTPUT_DIR = '/'
+__C.OUT_DIR = '/'
 __C.PROJECT_NAME = 'Pix2Pix'
 __C.PROJECT_VERSION_NAME = None
 __C.RESUME_ID = None
