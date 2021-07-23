@@ -136,8 +136,8 @@ if __name__ == '__main__':
     val_dataloader = DataLoader(val_dataset, batch_size=1, shuffle=False, num_workers=2, pin_memory=True,
                                 drop_last=False)
 
-    gen = Generator(in_channels=cfg.IMG_CHANNELS, features=cfg.GEN_FEATURES)
-    dis = Discriminator(in_channels=cfg.IMG_CHANNELS)
+    gen = Generator(in_channels=cfg.IMG_CHANNELS, features=cfg.GEN_FEATURES).to(cfg.DEVICE)
+    dis = Discriminator(in_channels=cfg.IMG_CHANNELS).to(cfg.DEVICE)
 
     # optimizers and amp
     opt_gen = optim.Adam(gen.parameters(), lr=cfg.LEARNING_RATE, betas=cfg.BETAS)
