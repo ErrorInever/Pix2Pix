@@ -13,9 +13,12 @@ def seed_everything(seed):
     torch.backends.cudnn.deterministic = True
 
 
-def save_checkpoint(save_path, gen, dis):
+def save_checkpoint(save_path, gen, dis, opt_gen, opt_dis, lr):
     torch.save({'gen': gen.state_dict(),
-                'dis': dis.state_dict()},
+                'dis': dis.state_dict(),
+                'opt_gen': opt_gen.state_dict(),
+                'opt_dis': opt_dis.state_dict(),
+                'lr': lr},
                save_path)
 
 
