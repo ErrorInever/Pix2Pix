@@ -5,7 +5,6 @@ import logging
 import torch
 import torch.nn as nn
 import torch.optim as optim
-import torchvision
 from tqdm import tqdm
 from model import Generator, Discriminator
 from torch.utils.data import DataLoader
@@ -94,7 +93,6 @@ def train_one_epoch(gen, dis, gen_opt, dis_opt, g_scaler, d_scaler, criterion, l
             with torch.no_grad():
                 fixed_fake_y = gen(fixed_x)
                 metric_logger.log_image(fixed_images, fixed_fake_y, epoch, batch_idx)
-
         # TODO add metrics eval
 
 
@@ -107,7 +105,7 @@ if __name__ == '__main__':
     if args.version_name:
         cfg.PROJECT_VERSION_NAME = args.version_name
     else:
-        cfg.PROJECT_VERSION_NAME = 'Default Pix2Pix'
+        cfg.PROJECT_VERSION_NAME = 'Default_Pix2Pix'
     if args.wandb_key:
         os.environ["WANDB_API_KEY"] = args.wandb_key
     if args.wandb_id:
@@ -139,20 +137,29 @@ if __name__ == '__main__':
     gen = Generator(in_channels=cfg.IMG_CHANNELS, features=cfg.GEN_FEATURES)
     dis = Discriminator(in_channels=cfg.IMG_CHANNELS)
 
+    # optimizers and amp
+    opt_gen = optim.Adam(gen.parameters(), lr=cfg.LEARNING_RATE, betas=cfg.BETAS)
+    opt_dis = optim.Adam(dis.parameters(), lr=cfg.LEARNING_RATE, betas=cfg.BETAS)
+
     if args.ckpt:
         try:
-            state = torch.load(args.ckpt)
+            state = torch.load(args.ckpt, map_location=cfg.DEVICE)
             gen.load_state_dict(state['gen'])
             dis.load_state_dict(state['dis'])
+            opt_gen.load_state_dict(state['opt_gen'])
+            opt_dis.load_state_dict(state['opt_dis'])
+
+            for param_group in opt_gen.param_groups:
+                param_group["lr"] = state['lr']
+            for param_group in opt_dis.param_groups:
+                param_group["lr"] = state['lr']
+
             logger.info('loaded pretrained weights')
         except Exception:
             logger.error('fail to load model')
             raise ValueError
     else:
         logger.info('loaded default weights')
-    # optimizers and amp
-    gen_opt = optim.Adam(gen.parameters(), lr=cfg.LEARNING_RATE, betas=cfg.BETAS)
-    dis_opt = optim.Adam(dis.parameters(), lr=cfg.LEARNING_RATE, betas=cfg.BETAS)
     g_scaler = GradScaler()
     d_scaler = GradScaler()
     # losses
@@ -166,4 +173,9 @@ if __name__ == '__main__':
     fixed_images, fixed_x = create_fixed_batch(idxs, train_img_names)
 
     for epoch in range(cfg.NUM_EPOCHS):
-        pass
+        train_one_epoch(gen, dis, opt_gen, opt_dis, g_scaler, d_scaler, criterion, l1_loss, train_dataloader,
+                        metric_logger, epoch, fixed_images, fixed_x)
+        if epoch % cfg.SAVE_EPOCH_FREQ == 0 and epoch != 0:
+            save_path = os.path.join(cfg.OUTPUT_DIR, f"{cfg.PROJECT_VERSION_NAME}_epoch_{epoch}.pth.tar")
+            save_checkpoint(save_path, gen, dis, opt_gen, opt_dis, cfg.LEARNING_RATE)
+            logger.info(f"Save model to {save_path}")
