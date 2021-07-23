@@ -29,13 +29,13 @@ class Discriminator(nn.Module):
         else:
             self.features = features
         self.initial = nn.Sequential(
-            nn.Conv2d(in_channels * 2, features[0], kernel_size=4, stride=2, padding=1, padding_mode="reflect"),
+            nn.Conv2d(in_channels * 2, self.features[0], kernel_size=4, stride=2, padding=1, padding_mode="reflect"),
             nn.LeakyReLU(0.2)
         )
         layers = []
-        in_channels = features[0]
-        for feature in features[1:]:
-            layers.append(CNNBlock(in_channels, feature, stride=1 if feature == features[-1] else 2))
+        in_channels = self.features[0]
+        for feature in self.features[1:]:
+            layers.append(CNNBlock(in_channels, feature, stride=1 if feature == self.features[-1] else 2))
             in_channels = feature
         layers.append(nn.Conv2d(in_channels, 1, kernel_size=4, stride=1, padding=1, padding_mode="reflect"))
         self.body = nn.Sequential(*layers)
