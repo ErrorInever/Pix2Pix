@@ -24,6 +24,7 @@ __C.DATA_ROOT = None
 __C.OUTPUT_DIR = '/'
 __C.PROJECT_NAME = 'Pix2Pix'
 __C.PROJECT_VERSION_NAME = None
+__C.RESUME_ID = None
 # Display
 __C.NUM_SAMPLES = 4
 __C.BATCH_FREQ = 100
