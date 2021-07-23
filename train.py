@@ -5,6 +5,7 @@ import logging
 import torch
 import torch.nn as nn
 import torch.optim as optim
+import torchvision
 from tqdm import tqdm
 from model import Generator, Discriminator
 from torch.utils.data import DataLoader
@@ -46,6 +47,7 @@ def train_one_epoch(gen, dis, gen_opt, dis_opt, g_scaler, d_scaler, criterion, l
     :param metric_logger:
     :param epoch:
     :param fixed_images:
+    :param fixed_x:
     :return:
     """
     loop = tqdm(dataloader, leave=True)
@@ -78,6 +80,7 @@ def train_one_epoch(gen, dis, gen_opt, dis_opt, g_scaler, d_scaler, criterion, l
         g_scaler.step(gen_opt)
         g_scaler.update()
 
+        # metrics
         if batch_idx % 10 == 0:
             loop.set_postfix(
                 d_real=torch.sigmoid(d_real).mean().item(),
@@ -85,10 +88,14 @@ def train_one_epoch(gen, dis, gen_opt, dis_opt, g_scaler, d_scaler, criterion, l
             )
 
         if batch_idx % cfg.BATCH_FREQ == 0:
+            metric_logger.log(g_loss.item(), d_loss.item(), torch.sigmoid(d_real).mean().item(),
+                                  torch.sigmoid(d_fake).mean().item())
+        if batch_idx % cfg.BATCH_IMG_FREQ == 0:
             with torch.no_grad():
-                fixed_y = gen(fixed_x)
-                fixed_image = torch.cat((fixed_images, fixed_y), dim=2)
-                # TODO: logs and save images
+                fixed_fake_y = gen(fixed_x)
+                metric_logger.log_image(fixed_images, fixed_fake_y, epoch, batch_idx)
+
+        # TODO add metrics eval
 
 
 if __name__ == '__main__':
