@@ -14,7 +14,7 @@ __C.GEN_FEATURES = 64
 __C.IMG_CHANNELS = 3
 __C.IMG_SIZE = 256
 __C.BATCH_SIZE = 16
-__C.NUM_EPOCHS = 20
+__C.NUM_EPOCHS = 50
 __C.LEARNING_RATE = 2e-4
 __C.L1_LAMBDA = 100
 # Optimizers
@@ -28,8 +28,8 @@ __C.RESUME_ID = None
 # Display
 __C.NUM_SAMPLES = 4
 __C.BATCH_FREQ = 100
-__C.BATCH_IMG_FREQ = 100
-__C.SAVE_EPOCH_FREQ = 1
+__C.BATCH_IMG_FREQ = 200
+__C.SAVE_EPOCH_FREQ = 10
 # Init logger
 logger = logging.getLogger()
 c_handler = logging.StreamHandler()
