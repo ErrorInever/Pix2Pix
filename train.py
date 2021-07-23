@@ -32,7 +32,7 @@ def parse_args():
     return parser.parse_args()
 
 
-def train_one_epoch(gen, dis, gen_opt, dis_opt, g_scaler, d_scaler, criterion, l1, dataloader, metric_logger, epoch,
+def train_one_epoch(gen, dis, gen_opt, dis_opt, g_scaler, d_scaler, criterion, l1_loss, dataloader, metric_logger, epoch,
                     fixed_x, fixed_y):
     """
     :param gen:
@@ -51,6 +51,7 @@ def train_one_epoch(gen, dis, gen_opt, dis_opt, g_scaler, d_scaler, criterion, l
     :return:
     """
     loop = tqdm(dataloader, leave=True)
+    fixed_x = fixed_x.to(cfg.DEVICE)
     for batch_idx, (x, y) in enumerate(loop):
         x = x.to(cfg.DEVICE)
         y = y.to(cfg.DEVICE)
