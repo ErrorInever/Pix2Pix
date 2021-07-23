@@ -92,7 +92,7 @@ def train_one_epoch(gen, dis, gen_opt, dis_opt, g_scaler, d_scaler, criterion, l
                                   torch.sigmoid(d_fake).mean().item())
         if batch_idx % cfg.BATCH_IMG_FREQ == 0:
             with torch.no_grad():
-                fixed_fake_y = gen(fixed_x.unsqueeze(0))
+                fixed_fake_y = gen(fixed_x)
                 metric_logger.log_image(fixed_y, fixed_fake_y, epoch, batch_idx)
         # TODO add metrics eval
 
@@ -173,6 +173,8 @@ if __name__ == '__main__':
                        if n.endswith(('png', 'jpeg', 'jpg'))]
     fixed_images, fixed_x, fixed_y = create_fixed_batch(idxs, train_img_names)
     save_image(fixed_images, os.path.join(cfg.OUT_DIR, 'fixed_images.png'))
+    save_image(fixed_x, os.path.join(cfg.OUT_DIR, 'fixed_x.png'))
+    save_image(fixed_y, os.path.join(cfg.OUT_DIR, 'fixed_y.png'))
 
     for epoch in range(cfg.NUM_EPOCHS):
         train_one_epoch(gen, dis, opt_gen, opt_dis, g_scaler, d_scaler, criterion, l1_loss, train_dataloader,

@@ -34,8 +34,9 @@ class MetricLogger:
 
     def log_image(self, fixed_y, fixed_fake_y, epoch, batch_idx, normalize=True):
         fixed_fake_y_grid = torchvision.utils.make_grid(fixed_fake_y, nrow=1, normalize=normalize, scale_each=True)
-        fixed_image = torch.cat((fixed_y, fixed_fake_y_grid), dim=2)
-        wandb.log({'fixed_image': [wandb.Image(np.moveaxis(fixed_image.detach().cpu().numpy(), 0, -1))]})
+        fixed_y_grid = torchvision.utils.make_grid(fixed_y, nrow=1, normalize=normalize, scale_each=True)
+        fixed_image = torch.cat((fixed_y_grid, fixed_fake_y_grid), dim=2)
+        wandb.log({'fixed_y': [wandb.Image(np.moveaxis(fixed_image.detach().cpu().numpy(), 0, -1))]})
         img_name = f"epoch{epoch}_step_{batch_idx}.jpg"
         self.save_torch_images(fixed_image, img_name)
 

@@ -25,8 +25,11 @@ def save_checkpoint(save_path, gen, dis, opt_gen, opt_dis, lr):
 
 def create_fixed_batch(idxs, img_names):
     batch = [plt.imread(img_names[i]) for i in idxs]
-    batch = torch.from_numpy(np.array(batch)).permute(0, 3, 1, 2)
-    grid = torchvision.utils.make_grid(batch, nrow=1, normalize=True, scale_each=True)
-    only_inputs = grid[:, :, 514:]
-    only_targets = grid[:, :, :514]
-    return grid, only_inputs, only_targets
+    inputs = np.array(list(map(lambda img: img[:, 512:, :], batch)))
+    targets = np.array(list(map(lambda img: img[:, :512, :], batch)))
+    inputs = torch.from_numpy(inputs).permute(0, 3, 1, 2)
+    targets = torch.from_numpy(targets).permute(0, 3, 1, 2)
+    grid = torch.from_numpy(np.array(batch)).permute(0, 3, 1, 2)
+    grid = torchvision.utils.make_grid(grid, nrow=1, normalize=True, scale_each=True)
+    return grid, inputs, targets
+
