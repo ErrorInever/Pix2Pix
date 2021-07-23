@@ -28,4 +28,5 @@ def create_fixed_batch(idxs, img_names):
     batch = torch.from_numpy(np.array(batch)).permute(0, 3, 1, 2)
     grid = torchvision.utils.make_grid(batch, nrow=1, normalize=True, scale_each=True)
     only_inputs = grid[:, :, 514:]
-    return grid, only_inputs
+    only_targets = grid[:, :, :514]
+    return grid, only_inputs, only_targets

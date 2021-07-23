@@ -6,6 +6,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from tqdm import tqdm
+from torchvision.utils import save_image
 from model import Generator, Discriminator
 from torch.utils.data import DataLoader
 from torch.cuda.amp import GradScaler
@@ -32,7 +33,7 @@ def parse_args():
 
 
 def train_one_epoch(gen, dis, gen_opt, dis_opt, g_scaler, d_scaler, criterion, l1, dataloader, metric_logger, epoch,
-                    fixed_images, fixed_x):
+                    fixed_x, fixed_y):
     """
     :param gen:
     :param dis:
@@ -89,11 +90,10 @@ def train_one_epoch(gen, dis, gen_opt, dis_opt, g_scaler, d_scaler, criterion, l
         if batch_idx % cfg.BATCH_FREQ == 0:
             metric_logger.log(g_loss.item(), d_loss.item(), torch.sigmoid(d_real).mean().item(),
                                   torch.sigmoid(d_fake).mean().item())
-        # if batch_idx % cfg.BATCH_IMG_FREQ == 0:
-        #     with torch.no_grad():
-        #         # logger.info(f"x {x.shape} | fixed_x {fixed_x.shape}")
-        #         fixed_fake_y = gen(fixed_x.unsqueeze(0))
-        #         metric_logger.log_image(fixed_images, fixed_fake_y, epoch, batch_idx)
+        if batch_idx % cfg.BATCH_IMG_FREQ == 0:
+            with torch.no_grad():
+                fixed_fake_y = gen(fixed_x.unsqueeze(0))
+                metric_logger.log_image(fixed_y, fixed_fake_y, epoch, batch_idx)
         # TODO add metrics eval
 
 
@@ -171,11 +171,12 @@ if __name__ == '__main__':
     idxs = [42, 93, 156, 266, 277]
     train_img_names = [os.path.join(train_img_folder, n) for n in os.listdir(train_img_folder)
                        if n.endswith(('png', 'jpeg', 'jpg'))]
-    fixed_images, fixed_x = create_fixed_batch(idxs, train_img_names)
+    fixed_images, fixed_x, fixed_y = create_fixed_batch(idxs, train_img_names)
+    save_image(fixed_images, os.path.join(cfg.OUTDIR, 'fixed_images.png'))
 
     for epoch in range(cfg.NUM_EPOCHS):
         train_one_epoch(gen, dis, opt_gen, opt_dis, g_scaler, d_scaler, criterion, l1_loss, train_dataloader,
-                        metric_logger, epoch, fixed_images, fixed_x)
+                        metric_logger, epoch, fixed_x, fixed_y)
         if epoch % cfg.SAVE_EPOCH_FREQ == 0 and epoch != 0:
             save_path = os.path.join(cfg.OUT_DIR, f"{cfg.PROJECT_VERSION_NAME}_epoch_{epoch}.pth.tar")
             save_checkpoint(save_path, gen, dis, opt_gen, opt_dis, cfg.LEARNING_RATE)
