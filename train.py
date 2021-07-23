@@ -172,7 +172,7 @@ if __name__ == '__main__':
     train_img_names = [os.path.join(train_img_folder, n) for n in os.listdir(train_img_folder)
                        if n.endswith(('png', 'jpeg', 'jpg'))]
     fixed_images, fixed_x, fixed_y = create_fixed_batch(idxs, train_img_names)
-    save_image(fixed_images, os.path.join(cfg.OUTDIR, 'fixed_images.png'))
+    save_image(fixed_images, os.path.join(cfg.OUT_DIR, 'fixed_images.png'))
 
     for epoch in range(cfg.NUM_EPOCHS):
         train_one_epoch(gen, dis, opt_gen, opt_dis, g_scaler, d_scaler, criterion, l1_loss, train_dataloader,
