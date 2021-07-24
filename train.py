@@ -27,6 +27,7 @@ def parse_args():
                                                               'input api key', default=None, type=str)
     parser.add_argument('--test_epoch', dest='test_epoch', help='Train one epoch for test', action='store_true')
     parser.add_argument('--device', dest='device', help='Use cuda', action='store_true')
+    parser.add_argument('--start_epoch', dest='start_epoch', help='Start from', default=None, type=int)
     parser.add_argument('--num_epoch', dest='num_epoch', help='Number of epochs', default=None, type=int)
     parser.print_help()
     return parser.parse_args()
@@ -118,6 +119,8 @@ if __name__ == '__main__':
         cfg.NUM_EPOCHS = 1
     if args.num_epoch:
         cfg.NUM_EPOCHS = args.num_epoch
+    if args.start_epoch:
+        cfg.START_EPOCH = args.start_epoch
 
     logger.info(f'Start {__name__} at {time.ctime()}')
     logger.info(f'Called with args: {args.__dict__}')
@@ -177,10 +180,14 @@ if __name__ == '__main__':
     save_image(fixed_x, os.path.join(cfg.OUT_DIR, 'fixed_x.png'))
     save_image(fixed_y, os.path.join(cfg.OUT_DIR, 'fixed_y.png'))
 
-    for epoch in range(cfg.NUM_EPOCHS):
+    for epoch in range(cfg.START_EPOCH, cfg.NUM_EPOCHS):
         train_one_epoch(gen, dis, opt_gen, opt_dis, g_scaler, d_scaler, criterion, l1_loss, train_dataloader,
                         metric_logger, epoch, fixed_x, fixed_y)
         if epoch % cfg.SAVE_EPOCH_FREQ == 0 and epoch != 0:
             save_path = os.path.join(cfg.OUT_DIR, f"{cfg.PROJECT_VERSION_NAME}_epoch_{epoch}.pth.tar")
             save_checkpoint(save_path, gen, dis, opt_gen, opt_dis, cfg.LEARNING_RATE)
             logger.info(f"Save model to {save_path}")
+
+    save_path = os.path.join(cfg.OUT_DIR, f"final_ckpt_{cfg.PROJECT_VERSION_NAME}_epoch_{epoch}.pth.tar")
+    save_checkpoint(save_path, gen, dis, opt_gen, opt_dis, cfg.LEARNING_RATE)
+    logger.info(f"Save model to {save_path}")
